@@ -6,34 +6,35 @@ const port = 5000;
 const server = express()
 server.use(express.json())
 
-// const server = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader("Content-Type", 'text/plain');
-//     res.end('Hello World, from NodeJs');
-// })
+let hobbits = [
+    {
+        id: 1,
+        name: 'Samwise Gamgee',
+        age: 111
+    },
+    {
+        id: 2,
+        name: 'Frodo Baggins',
+        again: 33
+    },
+    {
+        id: 3,
+        name: 'Leeroy Jenkens',
+        age: 38
+    }
+]
+
+let nextId = 4
 
 // this function is a request handler and middleware
 server.get('/', (req, res) => {
     res.send('Hello world from express')
 })
 
+// data comes from clients can be read 3 ways. req.params, req.query, req.body
 server.get('/hobbits', (req, res) => {
     // query string parameters get added to req.query
-    const sortField = req.query.sortby || 'id'
-    const hobbits = [
-        {
-            id: 3,
-            name: 'Samwise Gamgee'
-        },
-        {
-            id: 1,
-            name: 'Frodo Baggins'
-        },
-        {
-            id: 2,
-            name: 'Leeroy Jenkens'
-        }
-    ]
+    const sortField = req.query.sortby || 'id' 
 
     // apply the sorting
     const response = hobbits.sort(
@@ -43,7 +44,13 @@ server.get('/hobbits', (req, res) => {
 })
 
 server.post('/hobbits', (req, res) => {
-    res.status(201).json({ url: '/hobbits', operation: 'POST' })
+    console.log(req.body)
+    const hobbit = req.body;
+    hobbit.id = nextId++
+
+    hobbits.push(hobbit)
+
+    res.status(201).json(hobbits)
 })
 
 server.put('/hobbits', (req, res) => {
@@ -52,6 +59,7 @@ server.put('/hobbits', (req, res) => {
 
 server.delete('/hobbits:id', (req, res) => {
     const id = req.params.id
+    console.log(req.params)
     // or we can deconstruct it like so : const {id} = req.params;
     res.sendStatus(200).json({
         url: `hobbits/${id}`,
