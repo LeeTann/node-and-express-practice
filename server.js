@@ -53,8 +53,16 @@ server.post('/hobbits', (req, res) => {
     res.status(201).json(hobbits)
 })
 
-server.put('/hobbits', (req, res) => {
-    res.status(200).json({ url: '/hobbits', operation: 'PUT' })
+server.put('/hobbits/:id', (req, res) => {
+    const hobbit = hobbits.find(hobbit => hobbit.id == req.params.id)
+
+    if(!hobbit) {
+        res.status(404).json({ message: 'Hobbit doesnt not exist'})
+    } else {
+        // modify the existing hobbit
+        Object.assign(hobbit, req.body)
+        res.status(200).json(hobbit)
+    }
 })
 
 server.delete('/hobbits:id', (req, res) => {
